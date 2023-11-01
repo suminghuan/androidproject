@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,19 +10,18 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
 import org.eclipse.paho.client.mqttv3.MqttException;
-
 import java.util.List;
 
 public class location_selection extends AppCompatActivity {
     private static final String MQTT_URL = "210.240.202.123";
-    String smqttSubTopic = "DeviceState";
+    private static final String smqttSubTopic = "DeviceState";
+    private static String SelectedItem;
     String ETt_StringMQTTacc, ETt1_StringMQTTpass, ETt2_StringPhoneNumber;
-    private Spinner spinner;
+    private AutoCompleteTextView spinner;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -38,12 +38,11 @@ public class location_selection extends AppCompatActivity {
         setContentView(R.layout.activity_location_selection);
         // 初始化 Spinner
         spinner = findViewById(R.id.spinner);
-        Button btn = findViewById(R.id.btn_store);
+        ImageButton btn = findViewById(R.id.btn_store);
         //顯示連線狀態
-        TextView showState = findViewById(R.id.textView6);
+        TextView showState = findViewById(R.id.save_result);
         // 调用方法加载 homeName 数据
         loadHomeNames();
-
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -60,34 +59,44 @@ public class location_selection extends AppCompatActivity {
                 } catch (MqttException e) {
                     throw new RuntimeException(e);
                 }
+                SelectedItem = spinner.getText().toString();
+                if(!SelectedItem.equals("")){
+                    //選取家在資料庫裡的全部資料
+                    SpinnerSelectDB(SelectedItem);
+                    //選取資料連接MQTT
+                    boolean b = MqttCONNTER.getInstance().CreateConnect("tcp://" +
+                                    MQTT_URL +
+                                    ":1883",
+                            ETt_StringMQTTacc,
+                            ETt1_StringMQTTpass,
+                            ETt2_StringPhoneNumber);
+                    if (b) {
+                        boolean sub = MqttCONNTER.getInstance().subscribe(smqttSubTopic, 2);
+                        if (sub) {
+                            showState.setText("連線成功");
+                        }
+                        else{
+                            showState.setText("連線失敗");
+                        }
+                    }
+                }
 
-                //選取家在資料庫裡的全部資料
-                SpinnerSelectDB();
-                //選取資料連接MQTT
-                boolean b = MqttCONNTER.getInstance().CreateConnect("tcp://" +
-                                MQTT_URL +
-                                ":1883",
-                        ETt_StringMQTTacc,
-                        ETt1_StringMQTTpass,
-                        ETt2_StringPhoneNumber);
-                if (b) {
-                    boolean sub = MqttCONNTER.getInstance().subscribe(smqttSubTopic, 2);
-                    if (sub) {
-                        showState.setText("連線成功");
-                    }
-                    else{
-                        showState.setText("連線失敗");
-                    }
+            }
+        });
+        spinner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SelectedItem = spinner.getText().toString();
+                if(!SelectedItem.equals("")) {
+                    showState.setText("");
                 }
             }
         });
     }
 
     //選取家在資料庫裡的全部資料
-    private void SpinnerSelectDB(){
+    private void SpinnerSelectDB(String SelectedItem){
         //選取那一個家
-        String SelectedItem =  spinner.getSelectedItem().toString();
-
         MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
         SQLiteDatabase readDB = sqLiteHelper.getReadableDatabase();
         //選取整個資料表
@@ -104,6 +113,7 @@ public class location_selection extends AppCompatActivity {
             }
             cursor.moveToNext();
         }
+        cursor.close();
     }
     private void loadHomeNames() {
 
@@ -111,8 +121,7 @@ public class location_selection extends AppCompatActivity {
         // 从数据库中检索 homeName 数据
         List<String> homeNames = dao.getHomeNames(); // 从数据库中获取 homeName 列表
         // 创建 ArrayAdapter 并设置数据到 Spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, homeNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.dropdown_item, homeNames);
         spinner.setAdapter(adapter);
     }
 }

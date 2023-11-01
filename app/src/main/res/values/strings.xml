@@ -2,4 +2,12 @@
     <string name="app_name">GPS定位開門系統</string>
     <string name="imputclientid">ImputClientID</string>
     <string name="userpassword">Userpassword</string>
+    <string name="opne">開門</string>
+    <string name="close">關門</string>
+    <string name="app_name_control">門的開關控制</string>
+    <string name="select_home">選擇自家點</string>
+    <string name="save_home">儲存自家點</string>
+    <string name="connect_state">連線狀態:</string>
+    <string name="communication">設定通訊</string>
+    <string name="state_text">狀態:</string>
 </resources>

@@ -31,6 +31,7 @@ public class SQLiteDAO implements SQLiteDAOInterface{
         return homeNames;
     }
     public SQLiteDAO(Context context){
+        super();
         MySQLiteHelper sqLiteHelper = new MySQLiteHelper(context);
         readDB = sqLiteHelper.getReadableDatabase();
         writeDB = sqLiteHelper.getWritableDatabase();

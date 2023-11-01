@@ -27,6 +27,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class GPSMap extends AppCompatActivity implements LocationListener {
 
     private MapView mapView;
@@ -37,14 +39,15 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) { //左上角關閉
-        if(item.getItemId()==android.R.id.home){
-            Intent intent=new Intent(GPSMap.this, MainActivity.class);
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(GPSMap.this, MainActivity.class);
             startActivity(intent);
             finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this::onMapReady);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -65,14 +69,14 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
         findViewById(R.id.storeGPS).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try{
+                try {
                     data.put("UserDeviceLocation", savedMarkerLatLng);
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 boolean result = dao.insertDeviceLocation(data);
-                if(result){
-                    Toast.makeText(GPSMap.this,"裝置位置儲存成功",Toast.LENGTH_LONG).show();
+                if (result) {
+                    Toast.makeText(GPSMap.this, "裝置位置儲存成功", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -106,12 +110,12 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location lastKnownLocation = getLastKnownLocation();
         if (lastKnownLocation != null) {
             double latitude = lastKnownLocation.getLatitude();
             double longitude = lastKnownLocation.getLongitude();
             LatLng latLng = new LatLng(latitude, longitude);
-
+            savedMarkerLatLng = latLng;
             // 清除地圖上的所有標記
             googleMap.clear();
 
@@ -124,6 +128,11 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
         googleMap.addMarker(new MarkerOptions().position(latLng).title("我的位置"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));*/
 
+    }
+
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
     }
 
     @Override
@@ -175,11 +184,12 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             }
         });
     }
+
     public void relocateButtonClick(View view) {
         // 檢查定位權限
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // 獲取最新的位置
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location lastKnownLocation = getLastKnownLocation();
             if (lastKnownLocation != null) {
                 double latitude = lastKnownLocation.getLatitude();
                 double longitude = lastKnownLocation.getLongitude();
@@ -199,6 +209,23 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
     }
 
 
-
+    private Location getLastKnownLocation() {
+        Location bestLocation = null;
+        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            List<String> providers = locationManager.getProviders(true);
+            for (String provider : providers) {
+                Location l = locationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            }
+        }
+        return bestLocation;
+    }
 
 }
