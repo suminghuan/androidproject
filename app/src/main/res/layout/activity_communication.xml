@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".communication">
+
+    <Button
+        android:id="@+id/btn_acc_pass"
+        android:layout_width="117dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="10dp"
+        android:text="帳號設定"
+        app:layout_constraintBottom_toTopOf="@+id/btn_GPS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_GPS"
+        android:layout_width="117dp"
+        android:layout_height="69dp"
+        android:layout_marginBottom="17dp"
+        android:text="定位裝置"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_acc_pass" />
+</androidx.constraintlayout.widget.ConstraintLayout>

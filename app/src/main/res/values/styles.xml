@@ -1,0 +1,8 @@
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- 这里是其他主题属性 -->
+
+        <!-- 定义应用程序标题栏的背景颜色 -->
+        <item name="colorPrimary">#FF0000</item> <!-- 设置背景颜色 -->
+    </style>
+</resources>
