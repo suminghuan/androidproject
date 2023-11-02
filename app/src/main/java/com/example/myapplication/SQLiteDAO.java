@@ -22,8 +22,12 @@ public class SQLiteDAO implements SQLiteDAOInterface{
         Cursor cursor = readDB.rawQuery(selectQuery, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()){
-            homeNames.add(cursor.getString(2));
-            cursor.moveToNext();
+            if(cursor.getString(2)!=null) {
+                homeNames.add(cursor.getString(2));
+                cursor.moveToNext();
+            }else {
+                cursor.moveToNext();
+            }
         }
         cursor.close();
         close();

@@ -74,7 +74,8 @@ public class MQTT extends AppCompatActivity {
                 if(!ETt_MQTTacc.getText().toString().isEmpty()&&
                         !ETt_MQTTpass.getText().toString().isEmpty()&&
                         !ETt_PhoneNumber.getText().toString().isEmpty()&&
-                        !ETt_UserName.getText().toString().isEmpty()){
+                        !ETt_UserName.getText().toString().isEmpty()&&
+                        !ETt_homeName.getText().toString().isEmpty()){
 
                     Thread thread_connect = new Thread(new Runnable() {     //connect
                         @Override

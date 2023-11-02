@@ -80,8 +80,8 @@ public class location_selection extends AppCompatActivity {
                         }
                     }
                 }
+                }
 
-            }
         });
         spinner.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,11 +106,15 @@ public class location_selection extends AppCompatActivity {
         cursor.moveToFirst();
         while(!cursor.isAfterLast()){
             //找到選取的家將資料放入相對應MQTT連線參數
-            if( cursor.getString(2).equals(SelectedItem)){
-                ETt_StringMQTTacc = cursor.getString(3);
-                ETt1_StringMQTTpass = cursor.getString(4);
-                ETt2_StringPhoneNumber = cursor.getString(1);
+            String DBhomeName = cursor.getString(2);
+            if(DBhomeName!= null){
+                if( DBhomeName.equals(SelectedItem)){
+                    ETt_StringMQTTacc = cursor.getString(3);
+                    ETt1_StringMQTTpass = cursor.getString(4);
+                    ETt2_StringPhoneNumber = cursor.getString(1);
+                }
             }
+
             cursor.moveToNext();
         }
         cursor.close();

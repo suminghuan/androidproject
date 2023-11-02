@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".auto_door_open">
 
+
+
     <Switch
         android:id="@+id/switch1_auto_door_open"
         android:layout_width="match_parent"

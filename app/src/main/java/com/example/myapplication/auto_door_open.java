@@ -33,6 +33,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class auto_door_open extends AppCompatActivity {
 
@@ -297,6 +298,4 @@ public class auto_door_open extends AppCompatActivity {
         // 取消註冊訂閱者
         EventBus.getDefault().unregister(this);
     }
-
-
 }
