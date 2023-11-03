@@ -4,28 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/activity_auto_door_open"
     tools:context=".auto_door_open">
 
 
     <androidx.cardview.widget.CardView
-        app:cardBackgroundColor="@color/orange_100"
-        android:layout_centerHorizontal="true"
         android:id="@+id/door_state_show"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="20dp"
         android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        app:cardBackgroundColor="@color/orange_100"
         app:cardCornerRadius="30dp"
-        app:cardElevation="8dp"
-        >
-        <Switch
-            android:id="@+id/switch1_auto_door_open"
+        app:cardElevation="8dp">
+
+        <GridLayout
             android:layout_width="match_parent"
-            android:layout_height="230dp"
-            android:layout_weight="1"
-            android:text="自動偵測"
-             />
+            android:layout_height="match_parent"
+            android:columnCount="1"
+            android:rowCount="2">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="自動偵測"
+                android:textSize="30sp"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:layout_column="0"
+                android:layout_row="0"
+                />
+            <Switch
+                android:id="@+id/switch1_auto_door_open"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:layout_gravity="center"
+                android:switchMinWidth="150dp"
+                android:switchPadding="20dp"
+                android:layout_margin="20dp"
+                android:track="@drawable/switch_event"
+                android:thumb="@drawable/thumb"/>
+        </GridLayout>
 
     </androidx.cardview.widget.CardView>
 

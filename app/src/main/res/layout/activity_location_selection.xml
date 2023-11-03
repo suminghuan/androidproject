@@ -52,7 +52,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                app:cardBackgroundColor="@color/md_theme_light_primary"
+                app:cardBackgroundColor="@color/md_theme_dark_inverseSurface"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="10dp"
                 >
@@ -69,13 +69,17 @@
                         android:layout_gravity="start"
                         android:layout_marginStart="20dp"
                         android:text="@string/connect_state"
+                        android:textColor="@color/md_theme_light_primary"
+                        android:textStyle="bold"
                         android:textSize="25sp"
                         />
                     <TextView
                         android:id="@+id/save_result"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
+                        android:textAlignment="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_light_primary"
                         android:textSize="25sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -88,7 +92,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
                 app:cardBackgroundColor="@color/md_theme_light_primary"
-                app:cardCornerRadius="20dp"
+                app:cardCornerRadius="60dp"
                 app:cardElevation="10dp"
                 >
                 <ImageButton
@@ -96,7 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_margin="30dp"
-                    android:background="@drawable/control_open_btn"
+                    android:background="@drawable/store_btn"
                     android:scaleType="fitCenter"
                     android:text="@string/save_home"
                     android:src="@drawable/baseline_save_24"

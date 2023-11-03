@@ -1,39 +1,24 @@
 package com.example.myapplication;
 
-import static java.security.AccessController.getContext;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.content.ContextCompat;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.transition.Transition;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.material.transition.platform.MaterialContainerTransform;
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback;
 
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.concurrent.TransferQueue;
 
 public class control extends AppCompatActivity {
 
@@ -82,7 +67,6 @@ public class control extends AppCompatActivity {
                         MqttCONNTER.publish("ControlMessage",2,OpenManual.getBytes());//open/android_id
                     }
                 }).start();
-                tv.setText("開門");
             }
         });
         btn1.setOnClickListener(new View.OnClickListener() {        //關門
@@ -94,7 +78,6 @@ public class control extends AppCompatActivity {
                         MqttCONNTER.publish("ControlMessage",2,CloseManual.getBytes());//close/android_id
                     }
                 }).start();
-                tv.setText("關門");
             }
         });
     }

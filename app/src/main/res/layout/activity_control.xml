@@ -39,7 +39,6 @@
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:layout_margin="15dp"
-                android:hint="@string/close"
                 />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -62,8 +61,6 @@
             android:layout_margin="10dp"
             app:cardCornerRadius="70dp"
             app:cardElevation="2dp"
-            android:outlineAmbientShadowColor="@color/purple_700"
-            android:outlineSpotShadowColor="@color/purple_700"
             app:cardBackgroundColor="@color/green"
             >
 
@@ -91,8 +88,6 @@
             android:layout_margin="10dp"
             app:cardCornerRadius="70dp"
             app:cardElevation="2dp"
-            android:outlineAmbientShadowColor="@color/purple_700"
-            android:outlineSpotShadowColor="@color/purple_700"
             app:cardBackgroundColor="@color/red"
             >
 

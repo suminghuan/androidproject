@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -72,6 +74,7 @@ public class auto_door_open extends AppCompatActivity {
 
 
         switchAutoDoor = findViewById(R.id.switch1_auto_door_open);
+        RelativeLayout rl = findViewById(R.id.activity_auto_door_open);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -80,6 +83,9 @@ public class auto_door_open extends AppCompatActivity {
         switchAutoDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) rl.setBackgroundColor(Color.parseColor("#00B969"));
+                else rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
+
                 if(isChild()){
                     startTask();
                 }else {
