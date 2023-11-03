@@ -13,7 +13,7 @@ import java.util.List;
 
 public class SQLiteDAO implements SQLiteDAOInterface{
 
-    private SQLiteDatabase readDB,writeDB;
+    private final SQLiteDatabase readDB,writeDB;
 
     public List<String> getHomeNames() {
         // 在这里编写从数据库中检索 homeName 数据的代码
@@ -68,6 +68,8 @@ public class SQLiteDAO implements SQLiteDAOInterface{
         long result = writeDB.insert("mutable",null,values);
         return result != -1;
     }
+
+    // TODO: 2023/11/3 讓位置的資料與設定之距離能夠加到資料庫當前使用者的對應欄位
 
     public boolean insertDistance(JSONObject object){
         ContentValues values = new ContentValues();
