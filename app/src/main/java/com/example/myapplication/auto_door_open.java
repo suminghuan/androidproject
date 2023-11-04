@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -72,7 +74,7 @@ public class auto_door_open extends AppCompatActivity {
         UserDistanceSetting=0;
         android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
 
-
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         switchAutoDoor = findViewById(R.id.switch1_auto_door_open);
         RelativeLayout rl = findViewById(R.id.activity_auto_door_open);
         ActionBar actionBar = getSupportActionBar();
@@ -83,10 +85,10 @@ public class auto_door_open extends AppCompatActivity {
         switchAutoDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) rl.setBackgroundColor(Color.parseColor("#00B969"));
-                else rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
-
-                if(isChild()){
+//                if(b) rl.setBackgroundColor(Color.parseColor("#00B969"));
+//                else rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
+//                isChild()
+                if(b){
                     startTask();
                 }else {
                     stopTask();
@@ -105,11 +107,12 @@ public class auto_door_open extends AppCompatActivity {
             Runnable task = new Runnable() {
                 @Override
                 public void run() {
+
                     // 執行你的操作
                     // 例如：更新 UI 或執行某些任務
                     if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         // 獲取最新的位置
-                        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        Location lastKnownLocation = getLastKnownLocation(locationManager);
                         if (lastKnownLocation != null) {
                             double latitude = lastKnownLocation.getLatitude();
                             double longitude = lastKnownLocation.getLongitude();
@@ -163,7 +166,6 @@ public class auto_door_open extends AppCompatActivity {
                     }
                 }
             };
-
             // 開始執行任務
             handler.post(task);
         }
@@ -200,10 +202,10 @@ public class auto_door_open extends AppCompatActivity {
         String data = null;
 
         // 定義你的查詢語句
-        String query = "SELECT * FROM mutable"; // 替換為你的表名
-
-        // 使用SQLiteDatabase的rawQuery方法執行查詢
-        SQLiteDatabase readDB = null;
+        MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
+        SQLiteDatabase readDB = sqLiteHelper.getReadableDatabase();
+        //選取整個資料表
+        String query = "SELECT * FROM mutable";
         Cursor cursor = readDB.rawQuery(query, null);
 
         // 檢查是否成功檢索數據
@@ -304,4 +306,23 @@ public class auto_door_open extends AppCompatActivity {
         // 取消註冊訂閱者
         EventBus.getDefault().unregister(this);
     }
+    private Location getLastKnownLocation(LocationManager locationManager) {
+        Location bestLocation = null;
+        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            List<String> providers = locationManager.getProviders(true);
+            for (String provider : providers) {
+                Location l = locationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            }
+        }
+        return bestLocation;
+    }
+
 }

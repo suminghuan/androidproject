@@ -110,7 +110,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location lastKnownLocation = getLastKnownLocation();
+        Location lastKnownLocation = getLastKnownLocation(locationManager);
         if (lastKnownLocation != null) {
             double latitude = lastKnownLocation.getLatitude();
             double longitude = lastKnownLocation.getLongitude();
@@ -189,7 +189,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
         // 檢查定位權限
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // 獲取最新的位置
-            Location lastKnownLocation = getLastKnownLocation();
+            Location lastKnownLocation = getLastKnownLocation(locationManager);
             if (lastKnownLocation != null) {
                 double latitude = lastKnownLocation.getLatitude();
                 double longitude = lastKnownLocation.getLongitude();
@@ -209,7 +209,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
     }
 
 
-    private Location getLastKnownLocation() {
+    private Location getLastKnownLocation(LocationManager locationManager) {
         Location bestLocation = null;
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
