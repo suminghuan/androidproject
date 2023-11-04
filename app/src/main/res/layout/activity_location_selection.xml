@@ -101,9 +101,9 @@
                     android:layout_height="200dp"
                     android:layout_margin="30dp"
                     android:background="@drawable/store_btn"
+                    android:src="@drawable/baseline_save_24"
                     android:scaleType="fitCenter"
                     android:text="@string/save_home"
-                    android:src="@drawable/baseline_save_24"
                     android:contentDescription="@string/save_home"
                     />
             </androidx.cardview.widget.CardView>

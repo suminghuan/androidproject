@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
@@ -24,7 +25,7 @@ public class MQTT extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==android.R.id.home){
-            Intent intent=new Intent(MQTT.this, MainActivity.class);
+            Intent intent=new Intent(MQTT.this, communication.class);
             startActivity(intent);
             finish();
             return true;
@@ -40,7 +41,7 @@ public class MQTT extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mqtt1);
 
-        Button   btn  = findViewById(R.id.button1_save);
+        ImageButton btn  = findViewById(R.id.button1_save);
         EditText ETt_MQTTacc  = findViewById(R.id.editTextTextPerson_MQTTacc);
         EditText ETt_MQTTpass = findViewById(R.id.editTextTextPerson_MQTTpass);
         EditText ETt_PhoneNumber = findViewById(R.id.editTextTextPersonPhoneNumber);
