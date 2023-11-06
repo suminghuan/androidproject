@@ -46,6 +46,7 @@ public class location_selection extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setTitle("地點選擇");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

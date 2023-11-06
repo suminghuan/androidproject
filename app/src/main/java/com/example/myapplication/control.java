@@ -40,9 +40,9 @@ public class control extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {        //左上角關閉
+            actionBar.setTitle("開關門控制");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        TextView tv = findViewById(R.id.door_state);
         ImageButton btn  = findViewById(R.id.button_Open);
         ImageButton btn1 = findViewById(R.id.button_Close);
 

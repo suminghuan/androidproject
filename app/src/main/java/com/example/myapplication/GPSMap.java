@@ -63,6 +63,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setTitle("定位裝置");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

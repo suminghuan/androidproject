@@ -79,6 +79,7 @@ public class auto_door_open extends AppCompatActivity {
         RelativeLayout rl = findViewById(R.id.activity_auto_door_open);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setTitle("自動偵測開關");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

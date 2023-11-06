@@ -70,6 +70,7 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setTitle("開門距離設定");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
