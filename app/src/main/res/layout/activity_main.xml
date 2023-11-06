@@ -6,17 +6,26 @@
     android:layout_height="match_parent"
     android:name = 'android.permission.ACCESS_FINE_LOCATION'
     tools:context=".MainActivity">
+    <ImageView
+        android:id="@+id/bgg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/backgroundtop" />
 
     <TextView
         android:id="@+id/app_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/state_text"
-        android:layout_margin="20dp"
-        android:textColor="@color/md_theme_light_primary"
-        android:textStyle="bold"
-        android:textSize="30sp"/>
+        android:textColor="@color/md_theme_light_onSecondary"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <GridLayout
         android:layout_width="match_parent"
@@ -24,6 +33,7 @@
         android:layout_below="@+id/app_state"
         android:layout_centerInParent="true"
         android:columnCount="2"
+        android:layout_margin="10dp"
         android:rowCount="3">
 
         <androidx.cardview.widget.CardView
@@ -56,7 +66,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="false"
                     android:background="@android:color/transparent"
-                    android:contentDescription="打开设置"
+                    android:contentDescription="@string/communication"
                     android:scaleType="fitCenter"
                     android:src="@drawable/settings"></ImageButton>
 
@@ -65,6 +75,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/communication"
                     android:textAlignment="center"
+                    android:textSize="20sp"
                     android:textStyle="bold"></TextView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -99,7 +110,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="打开设置"
+                    android:contentDescription="@string/distance_setting"
                     android:scaleType="centerCrop"
                     android:src="@drawable/distance_setting"></ImageButton>
 
@@ -108,6 +119,7 @@
                     android:layout_height="wrap_content"
                     android:text="開門距離設定"
                     android:textAlignment="center"
+                    android:textSize="20sp"
                     android:textStyle="bold"></TextView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -142,7 +154,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="打开设置"
+                    android:contentDescription="@string/onoffcontrol"
                     android:scaleType="centerCrop"
                     android:src="@drawable/controls"></ImageButton>
 
@@ -151,6 +163,7 @@
                     android:layout_height="wrap_content"
                     android:text="門的開關控制"
                     android:textAlignment="center"
+                    android:textSize="20sp"
                     android:textStyle="bold"></TextView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -185,7 +198,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="打开设置"
+                    android:contentDescription="@string/select_home"
                     android:scaleType="centerCrop"
                     android:src="@drawable/map"></ImageButton>
 
@@ -194,6 +207,7 @@
                     android:layout_height="wrap_content"
                     android:text="地點選擇"
                     android:textAlignment="center"
+                    android:textSize="20sp"
                     android:textStyle="bold"></TextView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -208,7 +222,7 @@
             android:layout_gravity="fill"
             android:layout_margin="8dp"
             app:cardCornerRadius="8dp"
-            app:cardElevation="8dp">
+            app:cardElevation="5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -224,7 +238,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="打开设置"
+                    android:contentDescription="@string/auto_onoff"
                     android:scaleType="centerCrop"
                     android:src="@drawable/destination"></ImageButton>
 
@@ -233,6 +247,7 @@
                     android:layout_height="wrap_content"
                     android:text="自動偵測開關"
                     android:textAlignment="center"
+                    android:textSize="20sp"
                     android:textStyle="bold"></TextView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

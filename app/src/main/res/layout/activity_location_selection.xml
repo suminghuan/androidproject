@@ -5,16 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".location_selection">
-
+    <ImageView
+        android:id="@+id/bgg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/backgroundtop" />
 
     <androidx.cardview.widget.CardView
-        android:layout_width="320dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         app:cardBackgroundColor="@color/orange_100"
         android:id="@+id/location_slection"
-        app:cardCornerRadius="30dp"
+        app:cardCornerRadius="50dp"
         app:cardElevation="8dp"
         >
 
@@ -91,7 +96,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                app:cardBackgroundColor="@color/md_theme_light_primary"
+                app:cardBackgroundColor="@color/md_theme_light_onSecondary"
                 app:cardCornerRadius="60dp"
                 app:cardElevation="10dp"
                 >

@@ -85,14 +85,14 @@ public class auto_door_open extends AppCompatActivity {
         switchAutoDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                if(b) rl.setBackgroundColor(Color.parseColor("#00B969"));
-//                else rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
+                if(b) rl.setBackgroundColor(Color.parseColor("#00B969"));
+                else rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
 //                isChild()
-                if(b){
-                    startTask();
-                }else {
-                    stopTask();
-                }
+//                if(b){
+//                    startTask();
+//                }else {
+//                    stopTask();
+//                }
             }
         });
 

@@ -6,14 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".distance_setting">
 
+    <ImageView
+        android:id="@+id/bgg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/backgroundtop" />
+
     <androidx.cardview.widget.CardView
-        android:layout_width="320dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         app:cardBackgroundColor="@color/orange_100"
         android:id="@+id/distance_cardview"
-        app:cardCornerRadius="30dp"
+        app:cardCornerRadius="50dp"
         app:cardElevation="8dp"
         >
         <GridLayout
@@ -25,7 +32,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_row="0"
                 android:layout_column="0"
-                android:layout_width="220dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="20dp"
@@ -77,7 +84,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                app:cardBackgroundColor="@color/red"
+                app:cardBackgroundColor="@color/md_theme_light_onSecondary"
                 app:cardCornerRadius="60dp"
                 app:cardElevation="10dp"
                 >
@@ -92,7 +99,7 @@
                     android:layout_margin="20dp"
                     android:contentDescription="儲存"
                     android:src="@drawable/baseline_save_24"
-                    android:background="@drawable/control_close_btn"
+                    android:background="@drawable/store_btn"
                     />
             </androidx.cardview.widget.CardView>
         </GridLayout>

@@ -6,75 +6,80 @@
     android:layout_height="match_parent"
     tools:context=".GPSMap">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="62dp"
-        android:contentDescription="地圖視圖"
-        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/bgg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/backgroundtop" />
 
-    <GridLayout
-        android:id="@+id/gridLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mapView"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="129dp"
-        android:columnCount="2"
-        android:rowCount="3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapView"
-        tools:ignore="MissingConstraints">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="8dp"
+                    android:id="@+id/mapviewcard"
+                    >
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:contentDescription="地圖視圖" />
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="600dp"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginStart="0dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="8dp">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_rowWeight="1"
-            android:layout_column="0"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp">
+                    <LinearLayout
+                        android:id="@+id/gridLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/mapView"
+                        android:layout_gravity="center"
+                        android:layout_margin="15dp"
+                        android:gravity="center">
 
-        <Button
-            android:id="@+id/reset_GPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="relocateButtonClick"
-            android:text="重製定位"
-            tools:layout_editor_absoluteX="64dp"
-            tools:layout_editor_absoluteY="465dp" />
-    </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_row="0"
-        android:layout_rowWeight="1"
-        android:layout_column="1"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp">
+                        <Button
+                            android:id="@+id/reset_GPS"
+                            android:layout_width="125dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/store_btn"
+                            android:onClick="relocateButtonClick"
+                            android:text="@string/resettinglocatino"
+                            android:textColor="@color/md_theme_light_onSecondary"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:layout_margin="2dp"
+                            />
 
-        <Button
-            android:id="@+id/storeGPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="儲存"
-            tools:layout_editor_absoluteX="251dp"
-            tools:layout_editor_absoluteY="465dp" />
-    </androidx.cardview.widget.CardView>
-
-    </GridLayout>
+                        <Button
+                            android:id="@+id/storeGPS"
+                            android:layout_width="120dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/store_btn"
+                            android:text="@string/save"
+                            android:textColor="@color/md_theme_light_onSecondary"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:layout_margin="2dp"/>
+                    </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

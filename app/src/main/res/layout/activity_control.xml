@@ -6,104 +6,127 @@
     android:layout_height="match_parent"
     tools:context=".control">
 
+    <ImageView
+        android:id="@+id/bgg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/backgroundtop" />
+
     <androidx.cardview.widget.CardView
-        app:cardBackgroundColor="@color/orange_100"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/door_state_show"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="20dp"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:cardBackgroundColor="@color/orange_100"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="8dp"
         >
-        <LinearLayout
-            android:id="@+id/Linear"
+
+
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-            <TextView
-                android:id="@+id/door_state_text"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:text="目前狀態:"
-                android:textStyle="bold"
-                android:textSize="30sp"
-                android:layout_margin="15dp"
-                />
-            <TextView
-                android:id="@+id/door_state"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:layout_margin="15dp"
-                />
-        </LinearLayout>
+            android:layout_gravity="bottom"
+            android:columnCount="1"
+            android:rowCount="3"
+            android:layout_below="@+id/door_state_show">
+
+            <androidx.cardview.widget.CardView
+                app:cardBackgroundColor="@color/orange_100"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/door_state_show"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+
+                app:cardCornerRadius="30dp"
+                app:cardElevation="0dp"
+                android:layout_row="0"
+                android:layout_column="0"
+                >
+                <LinearLayout
+                    android:id="@+id/Linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="25dp"
+                    >
+                    <TextView
+                        android:id="@+id/door_state_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="5dp"
+                        android:text="目前狀態:"
+                        android:textStyle="bold"
+                        android:textSize="25sp"
+                        />
+                    <TextView
+                        android:id="@+id/door_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:padding="5dp"
+                        android:layout_margin="15dp"
+                        />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_OPEN"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:layout_rowWeight="1"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="70dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/md_theme_light_surface"
+                >
+
+                <ImageButton
+                    android:id="@+id/button_Open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/garage_open_btn"
+                    android:contentDescription="@string/opne"
+                    android:scaleType="centerInside"
+                    android:padding="20dp"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/control_open_btn"
+                    android:clickable="true"
+                    />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_CLOSE"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                android:layout_row="2"
+                android:layout_rowWeight="1"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/md_theme_light_surface"
+                app:cardCornerRadius="70dp"
+                app:cardElevation="2dp">
+
+                <ImageButton
+                    android:id="@+id/button_Close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/control_close_btn"
+                    android:clickable="true"
+                    android:contentDescription="@string/close"
+                    android:padding="20dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/garage_close_btn" />
+            </androidx.cardview.widget.CardView>
+        </GridLayout>
     </androidx.cardview.widget.CardView>
-
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="1"
-        android:rowCount="2"
-        android:layout_below="@+id/door_state_show">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView_OPEN"
-            android:layout_width="300dp"
-            android:layout_height="250dp"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_rowWeight="1"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="70dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/green"
-            >
-
-            <ImageButton
-                android:id="@+id/button_Open"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/garage_open_btn"
-                android:contentDescription="@string/opne"
-                android:scaleType="centerInside"
-                android:padding="20dp"
-                android:layout_margin="15dp"
-                android:background="@drawable/control_open_btn"
-                android:clickable="true"
-                />
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView_CLOSE"
-            android:layout_width="300dp"
-            android:layout_height="250dp"
-            android:layout_row="1"
-            android:layout_rowWeight="1"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="70dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/red"
-            >
-
-            <ImageButton
-                android:id="@+id/button_Close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/close"
-                android:src="@drawable/garage_close_btn"
-                android:scaleType="centerInside"
-                android:padding="20dp"
-                android:layout_margin="15dp"
-                android:background="@drawable/control_close_btn"
-                android:clickable="true"
-                />
-        </androidx.cardview.widget.CardView>
-    </GridLayout>
-
 </RelativeLayout>

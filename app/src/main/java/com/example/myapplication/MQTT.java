@@ -4,13 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,7 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MQTT extends AppCompatActivity {
-
+    String ETt_StringMQTTacc, ETt2_StringPhoneNumber, ETt1_StringMQTTpass, ETt3_StringUserName, ETt4_StringHomeName;
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==android.R.id.home){
@@ -50,11 +48,6 @@ public class MQTT extends AppCompatActivity {
         TextView show = findViewById(R.id.show_state);
 
         show.setText("請設定");
-        String ETt_StringMQTTacc = ETt_MQTTacc.getText().toString();
-        String ETt1_StringMQTTpass = ETt_MQTTpass.getText().toString();
-        String ETt2_StringPhoneNumber = ETt_PhoneNumber.getText().toString();
-        String ETt3_StringUserName = ETt_UserName.getText().toString();
-        String ETt4_StringHomeName = ETt_homeName.getText().toString();
         String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
         String smqttpubTopic = "CreateUser";
         String smqttSubTopic = "DeviceState";
@@ -65,6 +58,7 @@ public class MQTT extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setTitle("帳號設定");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -72,11 +66,24 @@ public class MQTT extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!ETt_MQTTacc.getText().toString().isEmpty()&&
-                        !ETt_MQTTpass.getText().toString().isEmpty()&&
-                        !ETt_PhoneNumber.getText().toString().isEmpty()&&
-                        !ETt_UserName.getText().toString().isEmpty()&&
-                        !ETt_homeName.getText().toString().isEmpty()){
+
+                ETt_StringMQTTacc = ETt_MQTTacc.getText().toString();
+                ETt1_StringMQTTpass = ETt_MQTTpass.getText().toString();
+                ETt2_StringPhoneNumber = ETt_PhoneNumber.getText().toString();
+                ETt3_StringUserName = ETt_UserName.getText().toString();
+                ETt4_StringHomeName = ETt_homeName.getText().toString();
+
+                if(!ETt_StringMQTTacc.isEmpty()&&
+                        !ETt1_StringMQTTpass.isEmpty()&&
+                        !ETt2_StringPhoneNumber.isEmpty()&&
+                        !ETt3_StringUserName.isEmpty()&&
+                        !ETt4_StringHomeName.isEmpty()) {
+
+                        ETt_MQTTacc.setError(null);
+                        ETt_MQTTpass.setError(null);
+                        ETt_PhoneNumber.setError(null);
+                        ETt_UserName.setError(null);
+                        ETt_homeName.setError(null);
 
                     Thread thread_connect = new Thread(new Runnable() {     //connect
                         @Override
@@ -85,22 +92,25 @@ public class MQTT extends AppCompatActivity {
                             if (b) {
                                 boolean sub = MqttCONNTER.getInstance().subscribe(smqttSubTopic, 2);
                                 if (sub) {
-                                    String smqttPubText = ETt_PhoneNumber.getText().toString()+"/"+ETt_UserName.getText().toString()+"/"+android_id;
+                                    String smqttPubText = ETt_PhoneNumber.getText().toString() + "/" + ETt_UserName.getText().toString() + "/" + android_id;
                                     MqttCONNTER.getInstance().publish(smqttpubTopic, 2, smqttPubText.getBytes());
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            try{
-                                                data.put("mqttAcc",ETt_MQTTacc.getText().toString());
-                                                data.put("mqttPass",ETt_MQTTpass.getText().toString());
-                                                data.put("phoneNumber",ETt_PhoneNumber.getText().toString());
-                                                data.put("homeName",ETt_homeName.getText().toString());
-                                            }catch (JSONException e){
+                                            try {
+                                                data.put("mqttAcc", ETt_MQTTacc.getText().toString());
+                                                data.put("mqttPass", ETt_MQTTpass.getText().toString());
+                                                data.put("phoneNumber", ETt_PhoneNumber.getText().toString());
+                                                data.put("homeName", ETt_homeName.getText().toString());
+                                            } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
+                                            show.setText("請設定");
                                             boolean result = dao.insert(data);
-                                            if(result) {
+                                            if (result) {
                                                 show.setText("資料儲存成功");
+                                            } else {
+                                                show.setText("資料儲存失敗");
                                             }
 
                                         }
@@ -110,18 +120,18 @@ public class MQTT extends AppCompatActivity {
                         }
                     });
                     thread_connect.start();
-
-                }else if(ETt_MQTTacc.getText().toString().isEmpty()) {
-                    ETt_MQTTacc.setText("請輸入帳號");
-                }else if(ETt_MQTTpass.getText().toString().isEmpty()){
-                    ETt_MQTTpass.setText("請輸入密碼");
-                }else if(ETt_PhoneNumber.getText().toString().isEmpty()){
-                    ETt_PhoneNumber.setText("請輸入手機號碼");
-                }else if(ETt_UserName.getText().toString().isEmpty()){
-                    ETt_UserName.setText("請輸入使用者名稱");
-                }else if(ETt_homeName.getText().toString().isEmpty()){
-                    ETt_homeName.setText("請輸入家的名稱");
+                }else if(ETt_StringMQTTacc.isEmpty()) {
+                    ETt_MQTTacc.setError("請輸入帳號");
+                }else if(ETt1_StringMQTTpass.isEmpty()){
+                    ETt_MQTTpass.setError("請輸入密碼");
+                }else if(ETt2_StringPhoneNumber.isEmpty()){
+                    ETt_PhoneNumber.setError("請輸入手機號碼");
+                }else if(ETt3_StringUserName.isEmpty()){
+                    ETt_UserName.setError("請輸入使用者名稱");
+                }else if(ETt4_StringHomeName.isEmpty()){
+                    ETt_homeName.setError("請輸入家的名稱");
                 }
+
             }
         });
 
@@ -142,4 +152,5 @@ public class MQTT extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
+
 }
