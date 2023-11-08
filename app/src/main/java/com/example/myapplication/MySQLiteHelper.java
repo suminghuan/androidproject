@@ -17,7 +17,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "phoneNumber TEXT, " +
                 "homeName TEXT, " +
                 "mqttAcc TEXT, "+
-                "mqttPass TEXT,"+
+                "mqttPass TEXT," +
                 "UserInputDistanceInt TEXT," +
                 "savedMarkerLatLng TEXT" +
                 ");";

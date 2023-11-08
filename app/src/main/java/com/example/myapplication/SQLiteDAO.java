@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class SQLiteDAO implements SQLiteDAOInterface{
 
     private final SQLiteDatabase readDB,writeDB;
@@ -69,9 +70,10 @@ public class SQLiteDAO implements SQLiteDAOInterface{
         return result != -1;
     }
 
-    // TODO: 2023/11/3 讓位置的資料與設定之距離能夠加到資料庫當前使用者的對應欄位
+    // DONE: 2023/11/3 讓位置的資料與設定之距離能夠加到資料庫當前使用者的對應欄位
 
-    public boolean insertDistance(JSONObject object){
+    public boolean insertDistance(String homeName, JSONObject object){
+
         ContentValues values = new ContentValues();
         try {
             String UserInputDistanceInt = object.getString("UserDistanceInt");
@@ -82,12 +84,13 @@ public class SQLiteDAO implements SQLiteDAOInterface{
             e.printStackTrace();
             return false;
         }
-        long result = writeDB.insert("mutable",null,values);
+        //UserInputDistanceInt新增 homeName 的那列下
+        long result = writeDB.update("mutable",values, "homeName = ?", new String[]{String.valueOf(homeName)});
         return result !=-1;
 
     }
 
-    public boolean insertDeviceLocation(JSONObject object){
+    public boolean insertDeviceLocation( String homeName, JSONObject object){
         ContentValues values = new ContentValues();
         try {
             String UserDeviceLocation = object.getString("UserDeviceLocation");
@@ -96,8 +99,9 @@ public class SQLiteDAO implements SQLiteDAOInterface{
             e.printStackTrace();
             return false;
         }
-        long result = writeDB.insert("mutable",null,values);
-        return result != 1;
+        //將savedMarkerLatLng新增到 homeName 的那列下
+        long result = writeDB.update("mutable",values, "homeName = ?", new String[]{String.valueOf(homeName)});
+        return result != -1;
     }
 
     @Override

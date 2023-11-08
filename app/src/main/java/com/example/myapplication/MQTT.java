@@ -19,7 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MQTT extends AppCompatActivity {
-    String ETt_StringMQTTacc, ETt2_StringPhoneNumber, ETt1_StringMQTTpass, ETt3_StringUserName, ETt4_StringHomeName;
+    public static String ETt_StringMQTTacc, ETt2_StringPhoneNumber, ETt1_StringMQTTpass, ETt3_StringUserName, ETt4_StringHomeName;
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==android.R.id.home){
@@ -102,6 +102,7 @@ public class MQTT extends AppCompatActivity {
                                                 data.put("mqttPass", ETt_MQTTpass.getText().toString());
                                                 data.put("phoneNumber", ETt_PhoneNumber.getText().toString());
                                                 data.put("homeName", ETt_homeName.getText().toString());
+                                                ETt4_StringHomeName = ETt_homeName.getText().toString();
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }

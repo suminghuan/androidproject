@@ -86,14 +86,14 @@ public class auto_door_open extends AppCompatActivity {
         switchAutoDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) rl.setBackgroundColor(Color.parseColor("#00B969"));
-                else rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
-//                isChild()
-//                if(b){
-//                    startTask();
-//                }else {
-//                    stopTask();
-//                }
+                if(b){
+                    rl.setBackgroundColor(Color.parseColor("#00B969"));
+
+                    startTask();
+                }else {
+                    rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
+                    stopTask();
+                }
             }
         });
 
@@ -128,12 +128,14 @@ public class auto_door_open extends AppCompatActivity {
                     } else if (UserDistanceSetting==0) {
                         UserDistanceSetting = retrieveDataFromDatabaseForDistanceSetting();
                     }
+
                     LatLng DeviceLocationLatLng = parseLatLngFromString(SQLiteDeviceLocation);
                     double DeviceLocationLatitude = DeviceLocationLatLng.latitude;
                     double DeviceLocationLongitude = DeviceLocationLatLng.longitude;
                     double CurrentLocationLatitude = CurrentLatLng.latitude;
                     double CurrentLocationLongitude = CurrentLatLng.longitude;
                     double StraightLineDistance = calculateDistance(DeviceLocationLatitude,DeviceLocationLongitude,CurrentLocationLatitude,CurrentLocationLongitude);
+
                     if(StraightLineDistance<UserDistanceSetting){
                         if(NeedMessage!=1){
                             new Thread(new Runnable() {
@@ -167,6 +169,8 @@ public class auto_door_open extends AppCompatActivity {
                     }
                 }
             };
+            Thread th = new Thread(task);
+            th.start();
             // 開始執行任務
             handler.post(task);
         }
@@ -270,6 +274,8 @@ public class auto_door_open extends AppCompatActivity {
     }
 
     private LatLng parseLatLngFromString(String latLngString) {
+
+        // TODO: 2023/11/8 字串切割問題
         String[] latLngArray = latLngString.split(",");
 
         if (latLngArray.length == 2) {

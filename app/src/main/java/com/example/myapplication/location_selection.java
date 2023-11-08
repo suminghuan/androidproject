@@ -75,6 +75,7 @@ public class location_selection extends AppCompatActivity {
                         boolean sub = MqttCONNTER.getInstance().subscribe(smqttSubTopic, 2);
                         if (sub) {
                             showState.setText("連線成功");
+                            MQTT.ETt4_StringHomeName=SelectedItem; //更改的家名稱供距離、位置使用判斷
                         }
                         else{
                             showState.setText("連線失敗");

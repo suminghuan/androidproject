@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +37,6 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
     static final int REQUEST_LOCATION_PERMISSION = 1001;
     private GoogleMap googleMap;
     private LatLng savedMarkerLatLng;
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) { //左上角關閉
         if (item.getItemId() == android.R.id.home) {
@@ -75,7 +75,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                boolean result = dao.insertDeviceLocation(data);
+                boolean result = dao.insertDeviceLocation(MQTT.ETt4_StringHomeName,data); //以輸入的homename為判斷基準
                 if (result) {
                     Toast.makeText(GPSMap.this, "裝置位置儲存成功", Toast.LENGTH_LONG).show();
                 }

@@ -52,7 +52,7 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
                         e.printStackTrace();
                     }
                     SQLiteDAOInterface dao = new SQLiteDAO(distance_setting.this);
-                    boolean result = dao.insertDistance(data);
+                    boolean result = dao.insertDistance(MQTT.ETt4_StringHomeName,data);     //以家名稱作為判斷基準
                     if (result) {
                         //儲存成功收鍵盤
                         try {
