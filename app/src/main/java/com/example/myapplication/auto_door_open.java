@@ -31,7 +31,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
+import android.content.SharedPreferences;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -49,11 +49,12 @@ public class auto_door_open extends AppCompatActivity {
     private LocationManager locationManager;
     private String SQLiteDeviceLocation;
     private LatLng CurrentLatLng;
-    private double UserDistanceSetting;
-    private Integer NeedMessage;//0為關，1為開
+    private float UserDistanceSetting;
+    private Integer NeedMessage=2;//0為關，1為開
     private String android_id ;
-    String OpenAuto = "open/"+android_id;
-    String CloseAuto = "close/"+android_id;
+    String OpenAuto;
+    String CloseAuto;
+    static boolean backgroundChange = false;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) { //左上角關閉
@@ -66,32 +67,54 @@ public class auto_door_open extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto_door_open);
         SQLiteDeviceLocation=null;
         UserDistanceSetting=0;
+
         android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+        OpenAuto = "open/"+android_id;
+        CloseAuto = "close/"+android_id;
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         switchAutoDoor = findViewById(R.id.switch1_auto_door_open);
+        SharedPreferences sharedPreferences=getSharedPreferences("save",MODE_PRIVATE);
+        switchAutoDoor.setChecked(sharedPreferences.getBoolean("value",false));
+
         RelativeLayout rl = findViewById(R.id.activity_auto_door_open);
+        if(backgroundChange){
+            backgroundCheck(rl);
+        }
+        else{
+            rl.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        }
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("自動偵測開關");
+            actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         switchAutoDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    rl.setBackgroundColor(Color.parseColor("#00B969"));
-
+            public void onCheckedChanged(CompoundButton compoundButton, boolean ischecked) {
+                if(ischecked){
+                    SharedPreferences.Editor editor=getSharedPreferences("save",MODE_PRIVATE).edit();
+                    editor.putBoolean("value",true);
+                    editor.apply();
+                    switchAutoDoor.setChecked(true);
+                    backgroundCheck(rl);
                     startTask();
                 }else {
-                    rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
+                    SharedPreferences.Editor editor=getSharedPreferences("save",MODE_PRIVATE).edit();
+                    editor.putBoolean("value",false);
+                    editor.apply();
+                    switchAutoDoor.setChecked(false);
+                    backgroundCheck(rl);
                     stopTask();
                 }
             }
@@ -125,7 +148,8 @@ public class auto_door_open extends AppCompatActivity {
                     }
                     if(SQLiteDeviceLocation==null){
                         SQLiteDeviceLocation = retrieveDataFromDatabase();//調出SQLite裝置位置(double)
-                    } else if (UserDistanceSetting==0) {
+                    }
+                    if (UserDistanceSetting==0.0) {
                         UserDistanceSetting = retrieveDataFromDatabaseForDistanceSetting();
                     }
 
@@ -169,8 +193,6 @@ public class auto_door_open extends AppCompatActivity {
                     }
                 }
             };
-            Thread th = new Thread(task);
-            th.start();
             // 開始執行任務
             handler.post(task);
         }
@@ -183,7 +205,7 @@ public class auto_door_open extends AppCompatActivity {
     }
 
     public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) { //計算距離
-        // 將經度和緯度轉換為弧度
+         //將經度和緯度轉換為弧度
         double radiansLat1 = Math.toRadians(lat1);
         double radiansLon1 = Math.toRadians(lon1);
         double radiansLat2 = Math.toRadians(lat2);
@@ -200,8 +222,8 @@ public class auto_door_open extends AppCompatActivity {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        // 返回兩點之間的直線距離
-        return EARTH_RADIUS * c;
+        // 返回兩點之間的直線距離 km -> m
+        return EARTH_RADIUS * c * 1000;
     }
     public String retrieveDataFromDatabase() {
         String data = null;
@@ -234,16 +256,17 @@ public class auto_door_open extends AppCompatActivity {
 
         return data;
     }
-    public double retrieveDataFromDatabaseForDistanceSetting() {
-        double data = 0.0; // 默认值可以根据您的需求更改
+    public float retrieveDataFromDatabaseForDistanceSetting() {
+        float data = 0; // 默认值可以根据您的需求更改
 
         // 定義你的查詢語句
         String query = "SELECT * FROM mutable"; // 替換為你的表名
 
         // 使用SQLiteDatabase的rawQuery方法執行查詢
-        SQLiteDatabase readDB = null;
-        Cursor cursor = readDB.rawQuery(query, null);
+        MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
+        SQLiteDatabase readDB = sqLiteHelper.getReadableDatabase();
 
+        Cursor cursor = readDB.rawQuery(query, null);
         // 檢查是否成功檢索數據
         if (cursor != null) {
             // 將游標移到第一行
@@ -251,21 +274,23 @@ public class auto_door_open extends AppCompatActivity {
 
             // 遍歷游標以檢索數據
             while (!cursor.isAfterLast()) {
-                // 假設你有一個名為"columnName"的列
-                @SuppressLint("Range") String valueStr = cursor.getString(cursor.getColumnIndex("UserInputDistanceInt")); // 替換為你的列名
-                try {
-                    // 尝试将字符串转换为double
-                    data = Double.parseDouble(valueStr);
-                } catch (NumberFormatException e) {
-                    // 处理转换失败的情况
-                    e.printStackTrace();
-                    // 或者可以添加默认值或其他错误处理逻辑
-                }
 
+                String DBhomeName = cursor.getString(2);
+                if(DBhomeName!= null){
+                    if( DBhomeName.equals(MQTT.ETt4_StringHomeName)) {
+                        @SuppressLint("Range") String valueStr = cursor.getString(cursor.getColumnIndex("UserInputDistanceInt")); // 替換為你的列名
+                        try {
+                            // 尝试将字符串转换为double
+                            data = Float.parseFloat(valueStr);
+                        } catch (NumberFormatException e) {
+                            // 处理转换失败的情况
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 // 移動到下一行
                 cursor.moveToNext();
             }
-
             // 關閉游標
             cursor.close();
         }
@@ -275,8 +300,8 @@ public class auto_door_open extends AppCompatActivity {
 
     private LatLng parseLatLngFromString(String latLngString) {
 
-        // TODO: 2023/11/8 字串切割問題
-        String[] latLngArray = latLngString.split(",");
+        // DONE: 2023/11/8 字串切割問題
+        String[] latLngArray = latLngString.substring(latLngString.indexOf("(")+1, latLngString.indexOf(")")).split(",");
 
         if (latLngArray.length == 2) {
             String latitudeStr = latLngArray[0];
@@ -330,6 +355,16 @@ public class auto_door_open extends AppCompatActivity {
             }
         }
         return bestLocation;
+    }
+    private void backgroundCheck(RelativeLayout rl){
+        if(switchAutoDoor.isChecked()){
+            rl.setBackgroundColor(Color.parseColor("#00B969"));
+            backgroundChange = true;
+        }
+        else{
+            rl.setBackgroundColor(Color.parseColor("#BA1A1A"));
+            backgroundChange = true;
+        }
     }
 
 }

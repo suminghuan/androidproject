@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btn3 = findViewById(R.id.button_location_choose);
         ImageButton btn4 = findViewById(R.id.button_control_door);
 
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);

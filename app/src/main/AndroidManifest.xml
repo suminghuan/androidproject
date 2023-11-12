@@ -28,6 +28,7 @@
             android:exported="false" />
         <activity
             android:name=".GPSMap"
+            android:foregroundServiceType="location"
             android:exported="false" />
         <activity
             android:name=".distance_setting"

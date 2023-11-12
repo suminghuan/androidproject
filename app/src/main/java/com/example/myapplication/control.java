@@ -41,6 +41,7 @@ public class control extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {        //左上角關閉
             actionBar.setTitle("開關門控制");
+            actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ImageButton btn  = findViewById(R.id.button_Open);

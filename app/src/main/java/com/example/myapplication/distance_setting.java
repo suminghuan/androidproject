@@ -5,8 +5,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -39,6 +43,7 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
         setContentView(R.layout.activity_distance_setting);
         EditText inputText = findViewById(R.id.input_distance_setting);
         ImageButton btn_store = findViewById(R.id.btn_store);
+
         btn_store.setOnClickListener(new View.OnClickListener() { //儲存
             @Override
             public void onClick(View view) {
@@ -62,7 +67,6 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
                             // TODO: handle exception
                         }
                         Toast.makeText(distance_setting.this, "儲存成功", Toast.LENGTH_LONG).show();
-                        inputText.setText("");
                     }
                 }
             }
@@ -71,10 +75,10 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("開門距離設定");
+            actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-
-
     }
+
 }

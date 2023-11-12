@@ -23,6 +23,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
@@ -34,6 +35,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
 
     private MapView mapView;
     private LocationManager locationManager;
+
     static final int REQUEST_LOCATION_PERMISSION = 1001;
     private GoogleMap googleMap;
     private LatLng savedMarkerLatLng;
@@ -82,7 +84,6 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             }
         });
 
-
     }
 
     public void onMapReady(GoogleMap map) {
@@ -102,13 +103,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
         });
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             return;
         }
         Location lastKnownLocation = getLastKnownLocation(locationManager);
@@ -121,7 +116,10 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             googleMap.clear();
 
             // 添加新的標記
-            googleMap.addMarker(new MarkerOptions().position(latLng).title("我的位置"));
+            Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("我的位置"));
+            if (locationMaker != null) {
+                locationMaker.showInfoWindow();
+            }
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         }
         /*double latitude=0,longitude=0;
@@ -170,16 +168,18 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
         // 取得 GoogleMap
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(GoogleMap googleMap) {
+            public void onMapReady(@NonNull GoogleMap googleMap) {
                 // 清除地圖上的所有標記
                 googleMap.clear();
 
                 // 創建一個標記並添加到地圖上
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .title("My Location");
-                googleMap.addMarker(markerOptions);
-
+                        .title("我的位置");
+                Marker locationMaker = googleMap.addMarker(markerOptions);
+                if (locationMaker != null) {
+                    locationMaker.showInfoWindow();
+                }
                 // 移動地圖視角到新的位置
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
             }
@@ -200,7 +200,10 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
                 googleMap.clear();
 
                 // 添加新的標記
-                googleMap.addMarker(new MarkerOptions().position(latLng).title("我的位置"));
+                Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("我的位置"));
+                if (locationMaker != null) {
+                    locationMaker.showInfoWindow();
+                }
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             }
         } else {

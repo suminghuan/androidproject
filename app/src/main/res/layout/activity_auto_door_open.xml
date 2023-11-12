@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/activity_auto_door_open"
+    android:background="@color/md_theme_light_onSecondary"
     tools:context=".auto_door_open">
     <ImageView
         android:id="@+id/bgg"
