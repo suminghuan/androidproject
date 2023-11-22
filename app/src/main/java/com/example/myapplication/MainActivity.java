@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ImageButton btn = findViewById(R.id.button_auto_door_open);
-        ImageButton btn1 = findViewById(R.id.button_set_information); //btn id 待改
+        ImageButton btn1 = findViewById(R.id.button_set_information);
         ImageButton btn2 = findViewById(R.id.button_distance_setting);
         ImageButton btn3 = findViewById(R.id.button_location_choose);
         ImageButton btn4 = findViewById(R.id.button_control_door);
@@ -113,6 +115,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if(doorHistoryCheckHomeName()){       // doorHistory
+            String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+            String doorHistory="getHistory/"+android_id;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_history_1", 2);
+                    if (sub_doorStata) {
+                        MqttCONNTER.getInstance().publish("door_history", 2, doorHistory.getBytes());
+                    }
+                }
+            }).start();
+        }else {
+            TextView textView = findViewById(R.id.doorHistory);
+            textView.setText("找不到資料");
+        }
+
+    }
+    public boolean doorHistoryCheckHomeName() {
+        String query = "SELECT * FROM mutable"; // 替換為你的表名
+        Boolean message = false;
+
+        // 使用SQLiteDatabase的rawQuery方法執行查詢
+        MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
+        SQLiteDatabase readDB = sqLiteHelper.getReadableDatabase();
+
+        Cursor cursor = readDB.rawQuery(query, null);
+        // 檢查是否成功檢索數據
+        if (cursor != null) {
+            // 將游標移到第一行
+            cursor.moveToFirst();
+
+            // 遍歷游標以檢索數據
+            while (!cursor.isAfterLast()) {
+
+                String DBhomeName = cursor.getString(2);
+                if (DBhomeName != null) {
+                    message = true;
+                }
+                // 移動到下一行
+                cursor.moveToNext();
+            }
+            // 關閉游標
+            cursor.close();
+        }
+        return message;
     }
 
     private void startLocationUpdates() {
