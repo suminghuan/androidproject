@@ -11,23 +11,36 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.Manifest;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HistoryListAdapter.HistroyClickInterface{
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
+    private  HistoryListAdapter historyListAdapter;
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==android.R.id.home){
@@ -43,13 +56,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageButton btn = findViewById(R.id.button_auto_door_open);
-        ImageButton btn1 = findViewById(R.id.button_set_information);
-        ImageButton btn2 = findViewById(R.id.button_distance_setting);
-        ImageButton btn3 = findViewById(R.id.button_location_choose);
-        ImageButton btn4 = findViewById(R.id.button_control_door);
+        ImageButton btn_ADO = findViewById(R.id.button_auto_door_open);
+        ImageButton btn_SI = findViewById(R.id.button_set_information);
+        ImageButton btn_DS = findViewById(R.id.button_distance_setting);
+        ImageButton btn_LC = findViewById(R.id.button_location_choose);
+        ImageButton btn_CD = findViewById(R.id.button_control_door);
+        TextView test = findViewById(R.id.app_state);
+        RecyclerView recyclerView = findViewById(R.id.doorHistory);
 
-
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        historyListAdapter = new HistoryListAdapter(HistoryList.itemCallback,this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter((historyListAdapter));
+        initHistorylist();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
@@ -64,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             startLocationUpdates();
         }
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn_ADO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(MainActivity.this, auto_door_open.class);
@@ -72,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn1.setOnClickListener(new View.OnClickListener() {
+        btn_SI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(MainActivity.this, communication.class);
@@ -80,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn2.setOnClickListener(new View.OnClickListener() {
+        btn_DS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(MainActivity.this, distance_setting.class);
@@ -88,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn3.setOnClickListener(new View.OnClickListener() {
+        btn_LC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(MainActivity.this, location_selection.class);
@@ -96,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn4.setOnClickListener(new View.OnClickListener() {
+        btn_CD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
@@ -115,27 +134,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(doorHistoryCheckHomeName()){       // doorHistory
+        if(doorHistoryCheckHomeName() ){       // doorHistory
             String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
             String doorHistory="getHistory/"+android_id;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_history_1", 2);
+                    test.setText(String.valueOf(sub_doorStata));
                     if (sub_doorStata) {
                         MqttCONNTER.getInstance().publish("door_history", 2, doorHistory.getBytes());
                     }
                 }
             }).start();
         }else {
-            TextView textView = findViewById(R.id.doorHistory);
+            TextView textView = findViewById(R.id.doorHistorytext);
             textView.setText("找不到資料");
         }
 
     }
     public boolean doorHistoryCheckHomeName() {
         String query = "SELECT * FROM mutable"; // 替換為你的表名
-        Boolean message = false;
+        boolean message = false;
 
         // 使用SQLiteDatabase的rawQuery方法執行查詢
         MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
@@ -162,7 +182,36 @@ public class MainActivity extends AppCompatActivity {
         }
         return message;
     }
+    public void initHistorylist(){
+        List<HistoryList> moiveList = new ArrayList<>();
+        moiveList.add(new HistoryList("狀態", "使用者", "日期", "時間"));
+        historyListAdapter.submitList(moiveList);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMqttMessageReceived(MqttMessageEvent event) {
+        String message = event.getMessage();
+        String[] temp =  message.split(",| ");
+        // 在這裡顯示訊息
 
+        List<HistoryList> moiveList = new ArrayList<>(historyListAdapter.getCurrentList());
+        moiveList.add(new HistoryList(temp[0],temp[1],temp[2],temp[3]));
+        historyListAdapter.submitList(moiveList);
+    }
+    protected void onStart(){
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 取消註冊訂閱者
+        EventBus.getDefault().unregister(this);
+    }
+
+
+
+    //TODO:GPS檢查過了但沒有存
     private void startLocationUpdates() {
     }
 
@@ -178,21 +227,28 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    @Subscribe
-    public void onEvent(MqttMessage message){
-        String payload=new String(message.getPayload());
-        MqttMessageEvent door_stata_event=new MqttMessageEvent("door_stata_1",payload);
-        EventBus.getDefault().post(door_stata_event);
+//    @Subscribe
+//    public void onEvent(@NonNull MqttMessage message){
+//        String payload=new String(message.getPayload());
+//        MqttMessageEvent door_stata_event=new MqttMessageEvent("door_stata_1",payload);
+//        EventBus.getDefault().post(door_stata_event);
+//
+//    }
+//    protected void onResume() {
+//        super.onResume();
+//    }
+//    protected void onPause() {
+//        super.onPause();
+//    }
+//    public void addItem(View view){
+//
+//    }
+//    public void updateItem(View view){
+//
+//    }
+//
+    @Override
+    public void onDelete(int position){
 
-    }
-    protected void onResume() {
-        super.onResume();
-    }
-    protected void onPause() {
-        super.onPause();
-    }
-    protected void onDestory(){
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
     }
 }

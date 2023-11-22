@@ -19,6 +19,7 @@ public class communication extends AppCompatActivity {
         findViewById(R.id.btn_acc_pass).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent(communication.this,MQTT.class);
                 startActivity(intent);
             }

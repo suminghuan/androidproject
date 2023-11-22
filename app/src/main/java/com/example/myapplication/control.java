@@ -52,10 +52,10 @@ public class control extends AppCompatActivity {
         String OpenManual = "open/"+android_id;
         String CloseManual = "close/"+android_id;
 
-        boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_state_1", 2);
-        if (sub_doorStata) {
-            MqttCONNTER.getInstance().publish("door_state", 2, doorStata.getBytes());
-        }
+//        boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_state_1", 2);
+//        if (sub_doorStata) {
+//            MqttCONNTER.getInstance().publish("door_state", 2, doorStata.getBytes());
+//        }
         //EventBus.getDefault().register(this);
 
 
@@ -104,7 +104,6 @@ public class control extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         // 取消註冊訂閱者
         EventBus.getDefault().unregister(this);
     }

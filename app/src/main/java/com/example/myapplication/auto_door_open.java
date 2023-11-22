@@ -72,6 +72,14 @@ public class auto_door_open extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto_door_open);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("自動偵測開關");
+            actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         SQLiteDeviceLocation=null;
         UserDistanceSetting=0;
 
@@ -90,13 +98,6 @@ public class auto_door_open extends AppCompatActivity {
         }
         else{
             rl.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        }
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("自動偵測開關");
-            actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
-            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         switchAutoDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

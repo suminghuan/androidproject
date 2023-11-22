@@ -19,7 +19,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MQTT extends AppCompatActivity {
-    public static String ETt_StringMQTTacc, ETt2_StringPhoneNumber, ETt1_StringMQTTpass, ETt3_StringUserName, ETt4_StringHomeName;
+    private static String ETt_StringMQTTacc, ETt2_StringPhoneNumber, ETt1_StringMQTTpass, ETt3_StringUserName;
+    public static String ETt4_StringHomeName;
+    private static final String MQTT_URL = "210.240.202.123";
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==android.R.id.home){
@@ -30,9 +33,6 @@ public class MQTT extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private static final String MQTT_URL = "210.240.202.123";
-    //private boolean b=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
