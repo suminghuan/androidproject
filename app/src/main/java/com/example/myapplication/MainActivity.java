@@ -123,9 +123,9 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_state_1", 2);
+                        boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("DeviceState", 2);
                         if (sub_doorStata) {
-                            MqttCONNTER.getInstance().publish("door_state", 2, doorStata.getBytes());
+                            MqttCONNTER.getInstance().publish("state_request", 2, doorStata.getBytes());
                         }
                         }
                 }).start();
@@ -140,10 +140,10 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_history_1", 2);
+                    boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("control_history", 2);
                     test.setText(String.valueOf(sub_doorStata));
                     if (sub_doorStata) {
-                        MqttCONNTER.getInstance().publish("door_history", 2, doorHistory.getBytes());
+                        MqttCONNTER.getInstance().publish("history_request", 2, doorHistory.getBytes());
                     }
                 }
             }).start();
@@ -160,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         // 使用SQLiteDatabase的rawQuery方法執行查詢
         MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
         SQLiteDatabase readDB = sqLiteHelper.getReadableDatabase();
-
         Cursor cursor = readDB.rawQuery(query, null);
         // 檢查是否成功檢索數據
         if (cursor != null) {
@@ -190,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMqttMessageReceived(MqttMessageEvent event) {
         String message = event.getMessage();
-        String[] temp =  message.split(",| ");
+        String[] temp =  message.split("[, ]");
         // 在這裡顯示訊息
 
         List<HistoryList> moiveList = new ArrayList<>(historyListAdapter.getCurrentList());
