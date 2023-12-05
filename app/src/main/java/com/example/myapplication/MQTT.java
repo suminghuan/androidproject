@@ -50,7 +50,7 @@ public class MQTT extends AppCompatActivity {
         show.setText("請設定");
         String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
         String smqttpubTopic = "CreateUser";
-        String smqttSubTopic = "DeviceState";
+        String smqttSubTopic = "RequestState";
 
 
         JSONObject data = new JSONObject();

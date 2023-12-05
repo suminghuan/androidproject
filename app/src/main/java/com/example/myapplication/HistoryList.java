@@ -17,9 +17,6 @@ public class HistoryList {
         this.when_date = when_date;
         this.when_time = when_time;
     }
-    public String getId(){
-        return id;
-    }
     public void setState(String state) {
         this.state = state;
     }
@@ -36,10 +33,10 @@ public class HistoryList {
         this.when_time = when_time;
     }
 
-    public String getState(){return state;}
-    public String getName(){return name;}
-    public String getWhen_date(){return when_date;}
-    public String getWhen_time(){return when_time;}
+    public String getState(){return this.state;}
+    public String getName(){return this.name;}
+    public String getWhen_date(){return this.when_date;}
+    public String getWhen_time(){return this.when_time;}
 
     public boolean equals(Object o){
         if(this == o) return true;
@@ -51,13 +48,12 @@ public class HistoryList {
     public int hashCode(){ return Objects.hash(state,name,when_date,when_time);}
     public static final DiffUtil.ItemCallback<HistoryList> itemCallback = new DiffUtil.ItemCallback<HistoryList>() {
                 @Override
-                public boolean areItemsTheSame(@NonNull HistoryList oldUser, @NonNull HistoryList newUser) {
-                    // User properties may have changed if reloaded from the DB, but ID is fixed
-                    return oldUser.getId() == newUser.getId();
+                public boolean areItemsTheSame(@NonNull HistoryList oldItem, @NonNull HistoryList newItem) {
+                    return oldItem.equals(newItem);
                 }
                 @Override
-                public boolean areContentsTheSame(@NonNull HistoryList oldUser, @NonNull HistoryList newUser) {
-                    return oldUser.equals(newUser);
+                public boolean areContentsTheSame(@NonNull HistoryList oldItem, @NonNull HistoryList newItem) {
+                    return oldItem.equals(newItem);
                 }
     };
 }

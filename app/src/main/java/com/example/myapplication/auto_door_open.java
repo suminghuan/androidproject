@@ -19,24 +19,17 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import android.content.SharedPreferences;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class auto_door_open extends AppCompatActivity {
@@ -55,7 +48,6 @@ public class auto_door_open extends AppCompatActivity {
     String OpenAuto;
     String CloseAuto;
     static boolean backgroundChange = false;
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) { //左上角關閉
         if(item.getItemId()==android.R.id.home){
@@ -72,7 +64,6 @@ public class auto_door_open extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto_door_open);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("自動偵測開關");
@@ -110,6 +101,7 @@ public class auto_door_open extends AppCompatActivity {
                     switchAutoDoor.setChecked(true);
                     backgroundCheck(rl);
                     startTask();
+
                 }else {
                     SharedPreferences.Editor editor=getSharedPreferences("save",MODE_PRIVATE).edit();
                     editor.putBoolean("value",false);
@@ -117,6 +109,7 @@ public class auto_door_open extends AppCompatActivity {
                     switchAutoDoor.setChecked(false);
                     backgroundCheck(rl);
                     stopTask();
+
                 }
             }
         });
@@ -160,7 +153,6 @@ public class auto_door_open extends AppCompatActivity {
                     double CurrentLocationLatitude = CurrentLatLng.latitude;
                     double CurrentLocationLongitude = CurrentLatLng.longitude;
                     double StraightLineDistance = calculateDistance(DeviceLocationLatitude,DeviceLocationLongitude,CurrentLocationLatitude,CurrentLocationLongitude);
-
                     if(StraightLineDistance<UserDistanceSetting){
                         if(NeedMessage!=1){
                             new Thread(new Runnable() {
@@ -335,7 +327,6 @@ public class auto_door_open extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         // 取消註冊訂閱者
         EventBus.getDefault().unregister(this);
     }

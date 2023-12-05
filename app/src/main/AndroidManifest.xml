@@ -11,6 +11,7 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="com.android.permission.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-feature android:name="android.hardware.screen.portrait"/>
 
     <application
         android:allowBackup="true"
@@ -28,7 +29,8 @@
 
         <activity
             android:name=".communication"
-            android:exported="false" />
+            android:exported="false"
+            />
         <activity
             android:name=".GPSMap"
             android:exported="false"
@@ -48,12 +50,12 @@
         <activity
             android:name=".MQTT"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

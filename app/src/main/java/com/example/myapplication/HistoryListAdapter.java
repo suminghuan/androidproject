@@ -51,5 +51,4 @@ public class HistoryListAdapter extends ListAdapter<HistoryList, HistoryListAdap
     interface HistroyClickInterface {
         public void onDelete(int position);
     }
-
 }

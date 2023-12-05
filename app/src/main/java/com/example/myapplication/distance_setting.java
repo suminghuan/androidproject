@@ -71,14 +71,12 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
                 }
             }
         });
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("開門距離設定");
             actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
     }
 
 }

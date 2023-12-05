@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import org.eclipse.paho.client.mqttv3.MqttException;
 import java.util.List;
 
@@ -51,6 +53,7 @@ public class location_selection extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("地點選擇");
+            actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -80,6 +83,7 @@ public class location_selection extends AppCompatActivity {
                         if (sub) {
                             showState.setText("連線成功");
                             MQTT.ETt4_StringHomeName=SelectedItem; //更改的家名稱供距離、位置使用判斷
+                            actionBar.setSubtitle(MQTT.ETt4_StringHomeName);
                         }
                         else{
                             showState.setText("連線失敗");
@@ -124,6 +128,7 @@ public class location_selection extends AppCompatActivity {
             cursor.moveToNext();
         }
         cursor.close();
+        readDB.close();
     }
     private void loadHomeNames() {
 

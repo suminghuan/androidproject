@@ -1,17 +1,23 @@
 package com.example.myapplication;
 
+import static java.lang.Thread.sleep;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -41,6 +47,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements HistoryListAdapter.HistroyClickInterface{
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     private  HistoryListAdapter historyListAdapter;
+    protected RecyclerView recyclerView;
+    List<HistoryList> moiveList = new ArrayList<>();
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==android.R.id.home){
@@ -62,17 +70,19 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         ImageButton btn_LC = findViewById(R.id.button_location_choose);
         ImageButton btn_CD = findViewById(R.id.button_control_door);
         TextView test = findViewById(R.id.app_state);
-        RecyclerView recyclerView = findViewById(R.id.doorHistory);
+        recyclerView = findViewById(R.id.doorHistory);
 
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         historyListAdapter = new HistoryListAdapter(HistoryList.itemCallback,this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter((historyListAdapter));
-        initHistorylist();
+        recyclerView.setAdapter(historyListAdapter);
+        initHistorylist(moiveList);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -123,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("DeviceState", 2);
+                        boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_state_1", 2);
                         if (sub_doorStata) {
-                            MqttCONNTER.getInstance().publish("state_request", 2, doorStata.getBytes());
+                            MqttCONNTER.getInstance().publish("door_state", 2, doorStata.getBytes());
                         }
                         }
                 }).start();
@@ -133,24 +143,6 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
                 startActivity(intent);
             }
         });
-
-        if(doorHistoryCheckHomeName() ){       // doorHistory
-            String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
-            String doorHistory="getHistory/"+android_id;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("control_history", 2);
-                    test.setText(String.valueOf(sub_doorStata));
-                    if (sub_doorStata) {
-                        MqttCONNTER.getInstance().publish("history_request", 2, doorHistory.getBytes());
-                    }
-                }
-            }).start();
-        }else {
-            TextView textView = findViewById(R.id.doorHistorytext);
-            textView.setText("找不到資料");
-        }
 
     }
     public boolean doorHistoryCheckHomeName() {
@@ -181,31 +173,63 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         }
         return message;
     }
-    public void initHistorylist(){
-        List<HistoryList> moiveList = new ArrayList<>();
+
+
+    public void initHistorylist(List<HistoryList> moiveList){
         moiveList.add(new HistoryList("狀態", "使用者", "日期", "時間"));
         historyListAdapter.submitList(moiveList);
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMqttMessageReceived(MqttMessageEvent event) {
         String message = event.getMessage();
-        String[] temp =  message.split("[, ]");
-        // 在這裡顯示訊息
+        String[] temp =  message.split("[\n]");
 
-        List<HistoryList> moiveList = new ArrayList<>(historyListAdapter.getCurrentList());
-        moiveList.add(new HistoryList(temp[0],temp[1],temp[2],temp[3]));
-        historyListAdapter.submitList(moiveList);
-    }
-    protected void onStart(){
-        super.onStart();
-        EventBus.getDefault().register(this);
+        moiveList = new ArrayList<>(historyListAdapter.getCurrentList());
+        for (String s : temp) {
+            String[] buffer = s.split("[, ]");
+            // 在這裡顯示訊息
+            if (moiveList.size() <= 5) {
+                moiveList.add(new HistoryList(buffer[0], buffer[1], buffer[2], buffer[3]));
+                historyListAdapter.submitList(moiveList);
+            }
+        }
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+//
+    @Override
     protected void onDestroy() {
-        super.onDestroy();
-        // 取消註冊訂閱者
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    protected void onResume() {
+        if(doorHistoryCheckHomeName() ){       // doorHistory
+            String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+            String doorHistory="getHistory/"+android_id;
+            boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_history_1", 0);
+            if (sub_doorStata) {
+                MqttCONNTER.getInstance().publish("door_history", 0, doorHistory.getBytes());
+            }
+        }else {
+            TextView textView = findViewById(R.id.doorHistorytext);
+            textView.setText("找不到紀錄");
+        }
+        super.onResume();
+    }
+
+    protected void onPause() {
+        moiveList.clear();
+        initHistorylist(moiveList);
+        historyListAdapter.notifyDataSetChanged();
+        historyListAdapter.submitList(moiveList);
+        super.onPause();
     }
 
 

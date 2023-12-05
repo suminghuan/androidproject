@@ -66,7 +66,7 @@
                     android:ems="10"
                     android:textAlignment="center"
                     android:inputType="textPersonName"
-                    android:hint="109thmos" />
+                    android:text="109thmos" />
             </LinearLayout>
             <LinearLayout
                 android:layout_height="match_parent"
@@ -91,7 +91,7 @@
                     android:ems="10"
                     android:textAlignment="center"
                     android:inputType="textPersonName"
-                    android:hint="0147" />
+                    android:text="0147" />
             </LinearLayout>
             <LinearLayout
                 android:layout_height="match_parent"

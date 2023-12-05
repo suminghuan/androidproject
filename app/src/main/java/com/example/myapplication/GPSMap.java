@@ -200,7 +200,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
                 googleMap.clear();
 
                 // 添加新的標記
-                Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("我的位置"));
+                Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("家的位置"));
                 if (locationMaker != null) {
                     locationMaker.showInfoWindow();
                 }
