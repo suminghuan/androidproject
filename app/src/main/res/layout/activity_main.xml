@@ -14,7 +14,7 @@
         app:srcCompat="@drawable/backgroundtop" />
 
     <TextView
-        android:id="@+id/app_state"
+        android:id="@+id/main_app_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -30,7 +30,7 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_state"
+        android:layout_below="@+id/main_app_state"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"

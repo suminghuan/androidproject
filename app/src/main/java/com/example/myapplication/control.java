@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.transition.platform.MaterialContainerTransform;
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback;
@@ -21,11 +22,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 
 public class control extends AppCompatActivity {
-
+    Intent intent;
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) { //左上角關閉
         if(item.getItemId()==android.R.id.home){
-            Intent intent = new Intent(control.this,MainActivity.class);
+            intent = new Intent(control.this,MainActivity.class);
             startActivity(intent);
             finish();
             return true;
@@ -37,7 +38,6 @@ public class control extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {        //左上角關閉
             actionBar.setTitle("開關門控制");
@@ -47,21 +47,15 @@ public class control extends AppCompatActivity {
         ImageButton btn  = findViewById(R.id.button_Open);
         ImageButton btn1 = findViewById(R.id.button_Close);
 
+        homeNameChk();
         String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
         String doorStata= "get/"+android_id;
         String OpenManual = "open/"+android_id;
         String CloseManual = "close/"+android_id;
-
-//        boolean sub_doorStata = MqttCONNTER.getInstance().subscribe("door_state_1", 2);
-//        if (sub_doorStata) {
-//            MqttCONNTER.getInstance().publish("door_state", 2, doorStata.getBytes());
-//        }
-        //EventBus.getDefault().register(this);
-
-
         btn.setOnClickListener(new View.OnClickListener() {         //開門
             @Override
             public void onClick(View view) {
+                homeNameChk();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -73,6 +67,7 @@ public class control extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {        //關門
             @Override
             public void onClick(View view) {
+                homeNameChk();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -92,9 +87,16 @@ public class control extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMqttMessageReceived(MqttMessageEvent event) {
         String message = event.getMessage();
-        // 在這裡顯示訊息
-        TextView door_state_log=findViewById(R.id.door_state);
-        door_state_log.setText(message);
+
+        if(event.getTopic().equals("door_state_1")) {
+            TextView door_state_log = findViewById(R.id.door_state);
+            door_state_log.setText(message);
+        }
+    }
+    public void homeNameChk(){
+        if(MQTT.ETt4_StringHomeName==null){
+            Toast.makeText(control.this, "請先設定通訊/地點選擇", Toast.LENGTH_LONG).show();
+        }
     }
     protected void onStart(){
         super.onStart();

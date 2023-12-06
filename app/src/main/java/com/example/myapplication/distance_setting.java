@@ -47,6 +47,7 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
         btn_store.setOnClickListener(new View.OnClickListener() { //儲存
             @Override
             public void onClick(View view) {
+                homeNameChk();
                 String ChangeToString =inputText.getText().toString();
                 if(!ChangeToString.equals("")) {
                     int UserInputDistanceInt = Integer.parseInt(ChangeToString);
@@ -78,5 +79,9 @@ public class distance_setting extends AppCompatActivity {       //左上角關�
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
-
+    public void homeNameChk(){
+        if(MQTT.ETt4_StringHomeName==null){
+            Toast.makeText(distance_setting.this, "請先設定通訊/地點選擇", Toast.LENGTH_LONG).show();
+        }
+    }
 }

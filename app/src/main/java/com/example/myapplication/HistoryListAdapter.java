@@ -12,11 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class HistoryListAdapter extends ListAdapter<HistoryList, HistoryListAdapter.MovieViewHolder> {
 
-    HistroyClickInterface histroyClickInterface;
 
-    protected HistoryListAdapter(@NonNull DiffUtil.ItemCallback<HistoryList> diffCallback, HistroyClickInterface histroyClickInterface) {
+    protected HistoryListAdapter(@NonNull DiffUtil.ItemCallback<HistoryList> diffCallback) {
         super(diffCallback);
-        this.histroyClickInterface = histroyClickInterface;
     }
 
     @NonNull
@@ -47,8 +45,5 @@ public class HistoryListAdapter extends ListAdapter<HistoryList, HistoryListAdap
             time_history.setText(movie.getWhen_time());
 
         }
-    }
-    interface HistroyClickInterface {
-        public void onDelete(int position);
     }
 }

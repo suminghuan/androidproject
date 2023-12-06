@@ -27,6 +27,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import android.content.SharedPreferences;
+import android.widget.Toast;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -48,6 +50,7 @@ public class auto_door_open extends AppCompatActivity {
     String OpenAuto;
     String CloseAuto;
     static boolean backgroundChange = false;
+    TextView app_state;
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) { //左上角關閉
         if(item.getItemId()==android.R.id.home){
@@ -80,36 +83,43 @@ public class auto_door_open extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         switchAutoDoor = findViewById(R.id.switch1_auto_door_open);
-        SharedPreferences sharedPreferences=getSharedPreferences("save",MODE_PRIVATE);
-        switchAutoDoor.setChecked(sharedPreferences.getBoolean("value",false));
+        SharedPreferences sharedPreferences=getSharedPreferences("chkState",MODE_PRIVATE);
+        switchAutoDoor.setChecked(sharedPreferences.getBoolean("chkValue",false));
 
         RelativeLayout rl = findViewById(R.id.activity_auto_door_open);
+
         if(backgroundChange){
             backgroundCheck(rl);
         }
         else{
             rl.setBackgroundColor(Color.parseColor("#FFFFFF"));
         }
-
+        if(MQTT.ETt4_StringHomeName == null){
+            switchAutoDoor.setClickable(false);
+            switchAutoDoor.setChecked(false);
+            stopTask();
+            Toast.makeText(auto_door_open.this, "請先設定通訊/地點選擇", Toast.LENGTH_LONG).show();
+        }else{
+            switchAutoDoor.setClickable(true);
+        }
         switchAutoDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean ischecked) {
-                if(ischecked){
-                    SharedPreferences.Editor editor=getSharedPreferences("save",MODE_PRIVATE).edit();
-                    editor.putBoolean("value",true);
+                if(ischecked && MQTT.ETt4_StringHomeName != null){
+                    SharedPreferences.Editor editor=getSharedPreferences("chkState",MODE_PRIVATE).edit();
+                    editor.putBoolean("chkValue",true);
                     editor.apply();
                     switchAutoDoor.setChecked(true);
                     backgroundCheck(rl);
                     startTask();
-
                 }else {
-                    SharedPreferences.Editor editor=getSharedPreferences("save",MODE_PRIVATE).edit();
-                    editor.putBoolean("value",false);
+                    SharedPreferences.Editor editor=getSharedPreferences("chkState",MODE_PRIVATE).edit();
+                    editor.putBoolean("chkValue",false);
                     editor.apply();
                     switchAutoDoor.setChecked(false);
                     backgroundCheck(rl);
                     stopTask();
-
                 }
             }
         });

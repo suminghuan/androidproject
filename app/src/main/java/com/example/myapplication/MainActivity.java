@@ -33,6 +33,7 @@ import android.Manifest;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
@@ -44,11 +45,12 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements HistoryListAdapter.HistroyClickInterface{
+public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     private  HistoryListAdapter historyListAdapter;
     protected RecyclerView recyclerView;
     List<HistoryList> moiveList = new ArrayList<>();
+    TextView doorhistoryText;
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==android.R.id.home){
@@ -69,11 +71,12 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         ImageButton btn_DS = findViewById(R.id.button_distance_setting);
         ImageButton btn_LC = findViewById(R.id.button_location_choose);
         ImageButton btn_CD = findViewById(R.id.button_control_door);
-        TextView test = findViewById(R.id.app_state);
+        doorhistoryText = findViewById(R.id.doorHistorytext);
         recyclerView = findViewById(R.id.doorHistory);
 
+        //歷史紀錄轉換
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        historyListAdapter = new HistoryListAdapter(HistoryList.itemCallback,this);
+        historyListAdapter = new HistoryListAdapter(HistoryList.itemCallback);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(historyListAdapter);
         initHistorylist(moiveList);
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -96,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         btn_ADO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(MainActivity.this, auto_door_open.class);
+                Intent intent = new Intent(MainActivity.this, auto_door_open.class);
                 startActivity(intent);
             }
         });
@@ -145,55 +149,7 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         });
 
     }
-    public boolean doorHistoryCheckHomeName() {
-        String query = "SELECT * FROM mutable"; // 替換為你的表名
-        boolean message = false;
 
-        // 使用SQLiteDatabase的rawQuery方法執行查詢
-        MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
-        SQLiteDatabase readDB = sqLiteHelper.getReadableDatabase();
-        Cursor cursor = readDB.rawQuery(query, null);
-        // 檢查是否成功檢索數據
-        if (cursor != null) {
-            // 將游標移到第一行
-            cursor.moveToFirst();
-
-            // 遍歷游標以檢索數據
-            while (!cursor.isAfterLast()) {
-
-                String DBhomeName = cursor.getString(2);
-                if (DBhomeName != null) {
-                    message = true;
-                }
-                // 移動到下一行
-                cursor.moveToNext();
-            }
-            // 關閉游標
-            cursor.close();
-        }
-        return message;
-    }
-
-
-    public void initHistorylist(List<HistoryList> moiveList){
-        moiveList.add(new HistoryList("狀態", "使用者", "日期", "時間"));
-        historyListAdapter.submitList(moiveList);
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMqttMessageReceived(MqttMessageEvent event) {
-        String message = event.getMessage();
-        String[] temp =  message.split("[\n]");
-
-        moiveList = new ArrayList<>(historyListAdapter.getCurrentList());
-        for (String s : temp) {
-            String[] buffer = s.split("[, ]");
-            // 在這裡顯示訊息
-            if (moiveList.size() <= 5) {
-                moiveList.add(new HistoryList(buffer[0], buffer[1], buffer[2], buffer[3]));
-                historyListAdapter.submitList(moiveList);
-            }
-        }
-    }
 
     @Override
     protected void onStart() {
@@ -232,7 +188,63 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
         super.onPause();
     }
 
+    public boolean doorHistoryCheckHomeName() {
+        String query = "SELECT * FROM mutable"; // 替換為你的表名
+        boolean message = false;
 
+        // 使用SQLiteDatabase的rawQuery方法執行查詢
+        MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this);
+        SQLiteDatabase readDB = sqLiteHelper.getReadableDatabase();
+        Cursor cursor = readDB.rawQuery(query, null);
+        // 檢查是否成功檢索數據
+        if (cursor != null) {
+            // 將游標移到第一行
+            cursor.moveToFirst();
+
+            // 遍歷游標以檢索數據
+            while (!cursor.isAfterLast()) {
+
+                String DBhomeName = cursor.getString(2);
+                if (DBhomeName != null) {
+                    message = true;
+                }
+                // 移動到下一行
+                cursor.moveToNext();
+            }
+            // 關閉游標
+            cursor.close();
+        }
+        readDB.close();
+        return message;
+    }
+
+
+    public void initHistorylist(List<HistoryList> moiveList){
+        moiveList.add(new HistoryList("狀態", "使用者", "日期", "時間"));
+        historyListAdapter.submitList(moiveList);
+        doorhistoryText.setText("沒有紀錄");
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMqttMessageReceived(MqttMessageEvent event) {
+        String message = event.getMessage();
+
+        if(event.getTopic().equals("door_state_1")) {
+            TextView appState = findViewById(R.id.main_app_state);
+            appState.setText("狀態："+message);
+        }
+        if(event.getTopic().equals("door_history_1")) {
+            //處理收到的歷史紀錄
+            String[] msgRow = message.split("[\n]");
+            moiveList = new ArrayList<>(historyListAdapter.getCurrentList());
+            for (String index : msgRow) {
+                String[] msgIndexCol = index.split("[, ]");
+                // 最多5筆記錄
+                moiveList.add(new HistoryList(msgIndexCol[0], msgIndexCol[1], msgIndexCol[2], msgIndexCol[3]));
+                historyListAdapter.submitList(moiveList);
+            }
+            doorhistoryText.setText("歷史紀錄");
+        }
+    }
 
     //TODO:GPS檢查過了但沒有存
     private void startLocationUpdates() {
@@ -270,8 +282,4 @@ public class MainActivity extends AppCompatActivity implements HistoryListAdapte
 //
 //    }
 //
-    @Override
-    public void onDelete(int position){
-
-    }
 }
