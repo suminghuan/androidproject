@@ -26,8 +26,8 @@ public class control extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) { //左上角關閉
         if(item.getItemId()==android.R.id.home){
-            intent = new Intent(control.this,MainActivity.class);
-            startActivity(intent);
+//            intent = new Intent(control.this,MainActivity.class);
+//            startActivity(intent);
             finish();
             return true;
         }
