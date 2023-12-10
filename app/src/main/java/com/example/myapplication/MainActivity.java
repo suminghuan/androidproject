@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -22,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -35,6 +38,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,15 +54,17 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
-    private  HistoryListAdapter historyListAdapter;
+    private HistoryListAdapter historyListAdapter;
     protected RecyclerView recyclerView;
     List<HistoryList> moiveList = new ArrayList<>();
     TextView doorhistoryText;
+    private LocationManager locationManager;
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
@@ -74,6 +85,7 @@ public class MainActivity extends AppCompatActivity{
         doorhistoryText = findViewById(R.id.doorHistorytext);
         recyclerView = findViewById(R.id.doorHistory);
 
+
         //歷史紀錄轉換
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         historyListAdapter = new HistoryListAdapter(HistoryList.itemCallback);
@@ -93,8 +105,7 @@ public class MainActivity extends AppCompatActivity{
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_CODE_LOCATION_PERMISSION);
         } else {
-            // 已經具有定位權限，開始定位
-            startLocationUpdates();
+
         }
 
         btn_ADO.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +167,24 @@ public class MainActivity extends AppCompatActivity{
         super.onStart();
         if(!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(!locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER )){
+            new AlertDialog.Builder(this)
+                    .setMessage("請開啟GPS定位")
+                    .setPositiveButton("前往開啟", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent callGPSSettingIntent = new Intent(
+                                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(callGPSSettingIntent);
+                        }
+                    }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    })
+                    .show();
+        }else{
+            startLocationUpdates();
         }
     }
 //
