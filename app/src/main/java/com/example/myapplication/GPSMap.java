@@ -1,12 +1,16 @@
 package com.example.myapplication;
 
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -32,10 +36,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class GPSMap extends AppCompatActivity implements LocationListener {
-
     private MapView mapView;
     private LocationManager locationManager;
-
     static final int REQUEST_LOCATION_PERMISSION = 1001;
     private GoogleMap googleMap;
     private LatLng savedMarkerLatLng;
@@ -59,6 +61,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
         SQLiteDAOInterface dao = new SQLiteDAO(this);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this::onMapReady);
@@ -88,7 +91,6 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
 
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-
         // 設定地圖的點擊監聽器
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -106,7 +108,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             return;
         }
-        Location lastKnownLocation = getLastKnownLocation(locationManager);
+        Location lastKnownLocation = getLastKnownLocation();
         if (lastKnownLocation != null) {
             double latitude = lastKnownLocation.getLatitude();
             double longitude = lastKnownLocation.getLongitude();
@@ -116,11 +118,11 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             googleMap.clear();
 
             // 添加新的標記
-            Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("我的位置"));
+            Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("家的位置"));
             if (locationMaker != null) {
                 locationMaker.showInfoWindow();
             }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
         }
         /*double latitude=0,longitude=0;
         LatLng latLng = new LatLng(latitude, longitude);
@@ -131,6 +133,17 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
 
     protected void onStart() {
         super.onStart();
+        if(!locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER )){
+            new AlertDialog.Builder(this)
+                    .setMessage("請開啟GPS定位")
+                    .setPositiveButton("前往開啟", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent callGPSSettingIntent = new Intent(
+                                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(callGPSSettingIntent);
+                        }})
+                    .show();
+        }
         mapView.onStart();
     }
 
@@ -171,7 +184,6 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 // 清除地圖上的所有標記
                 googleMap.clear();
-
                 // 創建一個標記並添加到地圖上
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
@@ -181,7 +193,7 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
                     locationMaker.showInfoWindow();
                 }
                 // 移動地圖視角到新的位置
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
             }
         });
     }
@@ -189,23 +201,30 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
     public void relocateButtonClick(View view) {
         // 檢查定位權限
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // 獲取最新的位置
-            Location lastKnownLocation = getLastKnownLocation(locationManager);
-            if (lastKnownLocation != null) {
-                double latitude = lastKnownLocation.getLatitude();
-                double longitude = lastKnownLocation.getLongitude();
-                LatLng latLng = new LatLng(latitude, longitude);
+            LocationListener locationListener = new LocationListener() {
+                public void onLocationChanged(Location location) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    // 清除地圖上的所有標記
+                    googleMap.clear();
 
-                // 清除地圖上的所有標記
-                googleMap.clear();
-
-                // 添加新的標記
-                Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("家的位置"));
-                if (locationMaker != null) {
-                    locationMaker.showInfoWindow();
+                    // 添加新的標記
+                    Marker locationMaker = googleMap.addMarker(new MarkerOptions().position(latLng).title("家的位置"));
+                    if (locationMaker != null) {
+                        locationMaker.showInfoWindow();
+                    }
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                 }
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-            }
+
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+                public void onProviderEnabled(String provider) {}
+
+                public void onProviderDisabled(String provider) {}
+            };
+            // 獲取最新的位置
+            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, null);
         } else {
             // 請求定位權限
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
@@ -213,10 +232,10 @@ public class GPSMap extends AppCompatActivity implements LocationListener {
     }
 
 
-    private Location getLastKnownLocation(LocationManager locationManager) {
+    private Location getLastKnownLocation() {
+
         Location bestLocation = null;
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
             List<String> providers = locationManager.getProviders(true);
             for (String provider : providers) {
                 Location l = locationManager.getLastKnownLocation(provider);
