@@ -107,13 +107,6 @@ public class MQTT extends AppCompatActivity {
                                                 e.printStackTrace();
                                             }
                                             show.setText("請設定");
-                                            boolean result = dao.insert(data);
-                                            if (result) {
-                                                show.setText("資料儲存成功");
-                                            } else {
-                                                show.setText("資料儲存失敗");
-                                            }
-
                                         }
                                     });
                                 }
@@ -138,10 +131,21 @@ public class MQTT extends AppCompatActivity {
 
     }
 
-    @Subscribe
-    public void onEvent(MqttMessage message){
-        TextView show_text = findViewById(R.id.show_state);
-        show_text.setText(message.toString());
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMqttMessageReceived(MqttMessageEvent event) {
+        String message = event.getMessage();
+        SQLiteDAOInterface dao = new SQLiteDAO(this);
+        if(message.equals("INSERT yes")) {
+            TextView show = findViewById(R.id.show_state);
+             boolean result = dao.insert(data);
+             if (result) {
+                 show.setText("資料儲存成功");
+                 dao.close();
+             }
+        }if(message.equals("INSERT no"){
+            show.setText("資料儲存失敗");
+            dao.close();
+        }
     }
     protected void onResume() {
         super.onResume();
